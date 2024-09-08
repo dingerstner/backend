@@ -24,16 +24,16 @@ const passwordResetConfirm = createBaseElysia().post(
       await auth.invalidateSession(resetToken[0].userId);
       const passwordPepper = PASSWORD_PEPPER;
       const passwordSalt = generateRandomString(16, alphabet("a-z", "A-Z", "0-9"));
-		const hashedPassword = await bunPassword.hash(passwordSalt + password + passwordPepper);
+		  const hashedPassword = await bunPassword.hash(passwordSalt + password + passwordPepper);
 
-		await db.update(user)
+		   await db.update(user)
         .set({
                 hashedPassword: hashedPassword,
 				passwordSalt: passwordSalt,
               }).where(eq(user.id, resetToken[0].id));
 		
 
-		await auth.invalidateUserSessions(resetToken[0].id);
+		    await auth.invalidateUserSessions(resetToken[0].id);
 
         await db.delete(passwordResetTokens).where(eq(passwordResetTokens.id, resetToken[0].id));
 	

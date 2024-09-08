@@ -5,7 +5,7 @@ import { password as bunPassword } from "bun";
 import { db } from "../../../db/primary";
 import {auth } from "../../../auth";
 import { user } from "../../../db/primary/schema";
-import { createBaseElysia } from "@/src/base";
+import { createBaseElysia } from "@/base";
 
 
 

@@ -1,7 +1,7 @@
 import { genAuthUrl } from "@/auth/provider/utils";
 import { generateCodeVerifier, generateState } from "arctic";
 import { t } from "elysia";
-import { createBaseElysia } from "../../../base";
+import { createBaseElysia } from "@/base";
 
 const provider = createBaseElysia().get(
 	"/:provider",

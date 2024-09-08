@@ -2,7 +2,7 @@ import { t } from "elysia";
 import { db } from "../../../db/primary";
 import {auth } from "../../../auth";
 import { password as bunPassword } from "bun";
-import { createBaseElysia } from "@/src/base";
+import { createBaseElysia } from "@/base";
 
 
 

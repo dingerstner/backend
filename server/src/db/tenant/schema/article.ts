@@ -1,14 +1,12 @@
 
-import { type AnySQLiteColumn, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import {textEnum} from "./helpers";
-import type { InferInsertModel, InferSelectModel, sql } from "drizzle-orm";
-import { createInsertSchema, createSelectSchema } from 'drizzle-typebox';
-import { z } from 'zod';
-import {fieldEnum} from "./helpers";
+import {  foreignKey, integer,  text } from "drizzle-orm/sqlite-core";
+import { sqliteTable} from "../../helpers";
 
 
-export const article = sqliteTable("article",{ 
-    id: text("id").notNull().primaryKey(),
+
+//articl
+export const article = sqliteTable()("article",{ 
+    id: text("id"),
     source:text("source"),
     url:text("url"),
     headLine:text("headline"),
@@ -23,15 +21,33 @@ export const article = sqliteTable("article",{
     audio:text("Audio"),
     author:text("author"),
     language:text("language"),
+    //score
+    headLinekeywords:text("headLinekeywords"),
+    subHeadLinekeywords:text("subHeadLinekeywords"),
+    contentkeywords:text("contentkeywords"),
+    imagekeywords:  text("imagekeywords",),
+    videokeywords:  text("videokeywords" ),
+    audiokeywords:  text("audiokeywords" ),
+    //type
+    section:text("section",{ enum: ["General","insurance","politics","Business","Technology","Science","Health ","Wellness","Innovation","Startups","investments","Education","Environment","Arts","Culture","sport","RiskManagement","Automotive","Fashion","lifestyle","Gadgets","Engineering","Telecommunications","media","IT","gaming","Computing"]}).default("General"),
+    subSection:text("subSection",{ enum: ["General","news","interview","editorial","gossip","article","podcast"]}).default("General"),
   },
+  (article) => {
+    return {
+      articleScoreFk: foreignKey({
+        columns: [article.id],
+        foreignColumns: [newArticl.id],
+        name: "articleScoreFk"
+      })
+    }
+  }
   );
 
-  const selectArticleSchema = createSelectSchema(article);
 
-  
 
-  export const newArticl = sqliteTable("newArticl",{
-    id: text("id"),
+//newArticl
+  export const newArticl = sqliteTable()("newArticl",{
+    id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }).unique(),
     link:text("link"),
     title:text("title"),
     pubDate:text("pubDate"),
@@ -41,95 +57,40 @@ export const article = sqliteTable("article",{
   )
 
  
-  const selectNewarticlechema = createSelectSchema(newArticl);
-  const insertNewarticlechema = createInsertSchema(newArticl);
-
-
-  export const newarticlechema = z.object({
-    body: selectNewarticlechema.pick({
-      id: true,
-      link: true,
-      title: true,
-      pubDate: true,
-      description: true,
-      source: true,
-    }),
-  });
-
-
-  export const updateArticleSchema = z.object({
-    body: selectArticleSchema.pick({
-      url: true,
-      headLine: true,
-      subHeadLine: true,
-      text: true,
-    }),
-  });
-
-
-  export const deleteArticleSchema = z.object({
-    body: selectArticleSchema.pick({
-      id: true,
-      url: true,
-      headLine: true,
-      subHeadLine: true,
-      text: true,
-      publishedAt: true,
-    }),
-  })
-
-
-  export type NewArticles = z.infer<typeof newarticlechema>['body'];
-  export type articles =  InferSelectModel<typeof article>;
-  export type UpdateArticle = z.infer<typeof updateArticleSchema>['body'];
-  export type DeleteArticle = z.infer<typeof deleteArticleSchema>['body'];
 
 
 
-  export const source = sqliteTable("source",{
-   id: text("id").notNull().primaryKey(),
-   url:text("Url"),
-   type: text ("type").default("General"),
-   field: textEnum("field",fieldEnum).default("General"),
-   country:text("country"),
-   language:text("language"),
-  },)
-
-  export type SelectSource = InferSelectModel<typeof source>
-  export type insertSource = InferInsertModel<typeof source>
-
-
-
-
-
-  
-export const articleType = sqliteTable("articleType ", {
-  id: text("id").$type<articles>().references((): AnySQLiteColumn => article.id, { onDelete: "cascade" }).primaryKey(),
-  section:text("section",{ enum: ["General","insurance","politics","Business","Technology","Science","Health ","Wellness","Innovation","Startups","investments","Education","Environment","Arts","Culture","sport","RiskManagement","Automotive","Fashion","lifestyle","Gadgets","Engineering","Telecommunications","media","IT","gaming","Computing"]}).default("General"),
-  subSection:text("subSection",{ enum: ["General","news","interview","editorial","gossip","article","podcast"]}).default("General"),
-  tags:text("tags"),
-})
-
-export type SelectArticleType = InferSelectModel<typeof articleType>
-export type insertArticleType = InferInsertModel<typeof articleType>
+//articleScore//
+export const articleScore = sqliteTable()(
+  "articleScore",{
+  articleId: text("id").notNull().primaryKey(),
+  headLine:integer("headline", { mode:'number'}),
+  subHeadLine:integer("subHeadLine", { mode: 'number' }),
+  content:integer("content", { mode: 'number' }),
+  source:integer("source", { mode: 'number' }),
+  postedOnHomePage:integer("postedOnHomePage", { mode: 'number' }),
+  image:integer("image", { mode: 'number' }),
+  video:integer("video", { mode: 'number' }),
+  audio:integer("Audio", { mode: 'number' }),
+  total: integer("total", { mode: 'number' })
+},
+(articleScore) => {
+  return {
+    articleScoreFk: foreignKey({
+      columns: [articleScore.articleId],
+      foreignColumns: [newArticl.id],
+      name: "articleScoreFk"
+    })
+  }
+}
+);
 
 
 
 
 
 
-export const articlekeywordses = sqliteTable("articlekeywordses",{
-  id: text("id").$type<articles>().references((): AnySQLiteColumn => article.id, { onDelete: "cascade" }).primaryKey(),
-  headLinekeywords:text("headLinekeywords"),
-  subHeadLinekeywords:text("subHeadLinekeywords"),
-  contentkeywords:text("contentkeywords"),
-  imagekeywords:  text("imagekeywords",),
-  videokeywords:  text("videokeywords" ),
-  audiokeywords:  text("audiokeywords" ),
-});
 
-export type SelectArticlekeywords = InferSelectModel<typeof articlekeywordses>
-export type insertArticlekeywords = InferInsertModel<typeof articlekeywordses>
 
 
 

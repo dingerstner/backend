@@ -1,4 +1,4 @@
-import {  customType  } from "drizzle-orm/sqlite-core";
+import {  customType, sqliteTableCreator  } from "drizzle-orm/sqlite-core";
 
 // Enum helper //
 
@@ -194,3 +194,21 @@ export const fieldEnum = {
   gaming:"gaming",
   Computing:"Computing",
 } as const;
+
+
+export const sqliteTable = (tenant?: string) =>
+	sqliteTableCreator(name => (tenant ? `${tenant}_${name}` : name))
+
+
+
+export const timestamp = customType<{
+  data: Date;
+  driverData: string;
+}>({
+  dataType() {
+    return "datetime";
+  },
+  fromDriver(value: string): Date {
+    return new Date(value);
+  },
+});
