@@ -1,25 +1,21 @@
 import { relations, sql } from "drizzle-orm";
 import { blob, index, integer, primaryKey, sqliteTable, text, type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
-import {company } from "./company.entity";
+import {admin } from "./admin";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
-  companyId: integer("companyId"),
+  companyName: text("CompanyName").notNull(),
   hashedPassword: text("hashed_password").notNull(),
   passwordSalt: text("password_salt").notNull(),
+  invaitePassword: text("password_pepper").notNull(),
   emailVerified: integer("email_verified",{ mode: "boolean" }).default(false),
   iconUrl: text("icon_url"),
 });
 
 
-export const userRelations = relations(user, ({ one }) => ({
-  organization: one(company , {
-    fields: [user.companyId],
-    references: [company.id],
-  }),
-}));
+
 
 export const  session = sqliteTable("session", {
 	id: text("id").notNull().primaryKey(),

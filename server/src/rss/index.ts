@@ -4,13 +4,14 @@ import {newArticl} from '@/db/tenant/schema/article';
 import { newFeed } from "xml-trap";
 
 interface Article {
-    id?: string;
-    Link?: string;
-    title?: string;
-    pubDate?: string;
-    description?: string;
-    source?: string;
-  }
+  id?: string;
+  Link?: string;
+  title?: string;
+  pubDate?: string;
+  description?: string;
+  source?: string;
+  Methods?: any; 
+}
   
 export const googleNews = async  ( keyword: string, TimeCount: string, language: string, country: string, tenant:string): Promise<void> => {
  
@@ -31,13 +32,13 @@ export const googleNews = async  ( keyword: string, TimeCount: string, language:
 
       const articlesToInsert: Article[] = [];
       articlesToInsert.push({
-        id: '',
-        Link: item.link  ,
-        title: item.title ,
-        pubDate: item.pubDate ,
-        description: item.description ,
-        source: item.source ,
+        Link: item.link,
+        title: item.title,
+        pubDate: item.pubDate,
+        description: item.description,
+        source: item.source,
       });
+
 
       if (articlesToInsert.length === 0) {
         console.error(`Entry with missing items to insert for keyword ${keyword}`);
@@ -47,15 +48,13 @@ export const googleNews = async  ( keyword: string, TimeCount: string, language:
       try {
         await Promise.all(articlesToInsert.map(async (article) => {
           return pool(tenant).insert(newArticl)
-            .values({
-              id: article.id,
-              link: article.Link,
-              title: article.title,
-              pubDate: article.pubDate,
-              description: article.description,
-              source: article.source
-            }
-          )
+          .values({
+            link: article.Link,
+            title: article.title,
+            pubDate: article.pubDate,
+            description: article.description,
+            source: article.source
+          })
         }
       )
     );

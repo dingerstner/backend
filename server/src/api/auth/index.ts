@@ -6,8 +6,8 @@ import { provider } from "./provider";
 import { providerCallback } from "./providerCallback";
 import { signup } from "./signup";
 
-const auth = createBaseElysia({
-	prefix: "/auth",
+const userAuth = createBaseElysia({
+	prefix: "/auth/",
 })
 	.use(provider)
 	.use(providerCallback)
@@ -16,4 +16,4 @@ const auth = createBaseElysia({
 	.use(logout)
 	.use(passwordReset);
 
-export { auth };
+export { userAuth };

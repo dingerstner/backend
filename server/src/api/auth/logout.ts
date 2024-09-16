@@ -1,6 +1,6 @@
 import { t } from "elysia";
 import {auth } from "../../../auth";
-import { createBaseElysia } from "@/src/base";
+import { createBaseElysia } from "@/base";
 
 
 const logout = createBaseElysia().post("/logout", async ({ cookie }) => {

@@ -1,12 +1,12 @@
 
 import {  foreignKey, integer,  text } from "drizzle-orm/sqlite-core";
 import { sqliteTable} from "../../helpers";
-
+import { createId } from '@paralleldrive/cuid2'
 
 
 //articl
 export const article = sqliteTable()("article",{ 
-    id: text("id"),
+    id: text('id').primaryKey().$defaultFn(createId),
     source:text("source"),
     url:text("url"),
     headLine:text("headline"),
@@ -47,7 +47,7 @@ export const article = sqliteTable()("article",{
 
 //newArticl
   export const newArticl = sqliteTable()("newArticl",{
-    id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }).unique(),
+    id: text('id').primaryKey().$defaultFn(createId),
     link:text("link"),
     title:text("title"),
     pubDate:text("pubDate"),

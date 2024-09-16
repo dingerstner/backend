@@ -1,5 +1,5 @@
 
-import { emailVerificationTokens, passwordResetTokens } from "../db/primary/schema/user.entity";
+import { emailVerificationTokens, passwordResetTokens } from "../db/primary/schema/user";
 import { db } from "../db/primary";
 import { TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
@@ -42,9 +42,9 @@ export async function createPasswordResetToken(
 
   const tokenId = generateRandomString(6, alphabet("0-9"));
   await db.insert(passwordResetTokens).values({
-    id: tokenId,
     userId: userId,
     expires: createDate(new TimeSpan(2, "h")),
+    hashedToken: '', 
   });
 
   return tokenId;

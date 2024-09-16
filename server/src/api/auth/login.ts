@@ -1,6 +1,6 @@
 import { t } from "elysia";
-import { db } from "../../../db/primary";
-import {auth } from "../../../auth";
+import { db } from "@/db/primary";
+import {auth } from "@/auth";
 import { password as bunPassword } from "bun";
 import { createBaseElysia } from "@/base";
 
@@ -8,31 +8,29 @@ import { createBaseElysia } from "@/base";
 
 const login = createBaseElysia().post(
 	"/login",
-	async ({ body: { email, password }, cookie, set, env: { PASSWORD_PEPPER } }) => {
+	async ({ body: { email, password }, cookie, set }) => {
            
 		const user = await db.query.user.findFirst({
 				where: (user, { eq }) => eq(user.email, email),
 			});
-			if (!user || !user.passwordSalt || !user.hashedPassword) {
+			if (!user || !user.passwordSalt || !user.hashedPassword || !user.invaitePassword) {
                 throw new Error("Invalid email");
               }
 
-			  const passwordPepper = PASSWORD_PEPPER;
-              if (!passwordPepper) {
-                throw new Error("Password is required");
-              }
-			  const passwordValid = bunPassword.verify(user.passwordSalt + password + passwordPepper, user.hashedPassword);
+			  const passwordValid = bunPassword.verify(user.passwordSalt + password + user.invaitePassword, user.hashedPassword);
 
               if (!passwordValid) {
                 throw new Error("User does not have a password");
               }
 
 			  const session = await auth.createSession(user.id, {
-				  id: "",
-				  email: "",
-				  name: "",
-				  companyId: "",
-				  email_verified: false
+				id: "",
+				email: "",
+				name: "",
+				companyNeme: "",
+				email_verified: false,	
+				expiresAt: "",
+				
 			  });
 			  const sessionCookie = auth.createSessionCookie(session.id);
              

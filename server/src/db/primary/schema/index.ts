@@ -1,3 +1,3 @@
-export * from "./company.entity"
-export * from "./user.entity"
-export * from "./data..entity.ts"
+export * from "./admin.ts"
+export * from "./user.ts"
+export * from "./data..ts"

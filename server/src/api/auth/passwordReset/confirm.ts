@@ -1,12 +1,12 @@
-import { auth } from "../../../../auth/index";
-import {db} from "../../../../db/primary";
+import { auth } from "@/auth/index";
+import {db} from "@/db/primary";
 import { password as bunPassword } from "bun";
 import { t } from "elysia";
 import { isWithinExpirationDate } from "oslo";
 import { alphabet, generateRandomString, sha256 } from "oslo/crypto";
 import { encodeHex } from "oslo/encoding";
-import { createBaseElysia } from "../../../../base";
-import { passwordResetTokens, user,  type SelectpasswordResetTokens } from "../../../../db/primary/schema/user.entity";
+import { createBaseElysia } from "@/base";
+import { passwordResetTokens, user} from "@/db/primary/schema/user";
 import { eq} from "drizzle-orm";
 
 
@@ -30,10 +30,10 @@ const passwordResetConfirm = createBaseElysia().post(
         .set({
                 hashedPassword: hashedPassword,
 				passwordSalt: passwordSalt,
-              }).where(eq(user.id, resetToken[0].id));
+              }).where(eq(user.id, resetToken[0].id.toString()));
 		
 
-		    await auth.invalidateUserSessions(resetToken[0].id);
+              await auth.invalidateUserSessions(resetToken[0].expires.toISOString());
 
         await db.delete(passwordResetTokens).where(eq(passwordResetTokens.id, resetToken[0].id));
 	

@@ -1,15 +1,14 @@
 
-import { getTokens } from "../../../auth/provider/utils";
+import { getTokens } from "@/auth/provider/utils";
 import { OAuth2RequestError } from "arctic";
-import {  t } from "elysia";
+import {  redirect, t } from "elysia";
 import { generateId } from "lucia";
-import {auth } from "../../../auth";
-import { getAuthAccount } from "../../../auth/provider/utils";
-import {db} from "../../../db/primary";
+import {auth } from "@/auth";
+import { getAuthAccount } from "@/auth/provider/utils";
+import {db} from "@/db/primary";
 import { createBaseElysia } from "@/base";
 import { oauthAccount, user } from "@/db/primary/schema";
 import { eq } from "drizzle-orm";
-
 const providerCallback = createBaseElysia().get(
 	"/:provider/callback",
 	async ({ query: { code, state }, cookie, params: { provider }, set }) => {
@@ -40,7 +39,9 @@ const providerCallback = createBaseElysia().get(
 					iconUrl: account.iconUrl,
 					hashedPassword: "",
 					passwordSalt: "",
-				  })
+					invaitePassword: "", 
+					CompanyName: "", 
+				})
 					.catch(error => {
 						throw new Error("Error creating user");
 					});
@@ -59,21 +60,20 @@ const providerCallback = createBaseElysia().get(
 					});
 			}
 
-			const session = await auth .createSession(existingUser === null ? userId :existingUser[0]?.id, {
-				id: "",
-				email: "",
-				name: "",
-				companyId: "",
-				email_verified: false,
-
-			});
+			const session = await auth.createSession(existingUser === null ? userId : existingUser[0]?.id, {
+			  id: "",
+			  email: "",
+			  name: "",
+			  userId: "",
+			  email_verified: false,
+			} as any);
 			const sessionCookie = auth .createSessionCookie(session.id);
 
 			cookie[sessionCookie.name]?.set({
 				value: sessionCookie.value,
 				...sessionCookie.attributes,
 			});
-			set.redirect = next;
+		  
 		} catch (error) {
 			if (error instanceof OAuth2RequestError) {
 				throw new Error("Invalid code");

@@ -1,12 +1,12 @@
-import { db} from "../../../../db/primary";
-import { passwordResetTokens, user} from "../../../../db/primary/schema/user.entity";
+import { db} from "@/db/primary";
+import { passwordResetTokens, user} from "@/db/primary/schema/user";
 import { t } from "elysia";
 import { TimeSpan, generateId } from "lucia";
 import nodemailer from "nodemailer" ;
 import { createDate } from "oslo";
 import { sha256 } from "oslo/crypto";
 import { encodeHex } from "oslo/encoding";
-import { createBaseElysia } from "../../../../base";
+import { createBaseElysia } from "@/base";
 import {eq} from "drizzle-orm";
 
 const passwordResetRequest = createBaseElysia().post(
